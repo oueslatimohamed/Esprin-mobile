@@ -3,6 +3,8 @@ package Views;
 import Modules.Event;
 import Services.EventServices;
 import com.codename1.ui.*;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
@@ -128,6 +130,25 @@ public class UpdateEvent extends Form{
                 Date,
                 UpdateBtn
         );
+        UpdateBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(TitleEv.getText().isEmpty() || content.getText().isEmpty() || Location.getText().isEmpty()){
+                    Dialog.show("Alert", "Please fill all the fields",new Command("OK"));
+                }else {
+                    //Event Event = new Event();
+                    event.setTitleEvent(TitleEv.getText());
+                    event.setDescription(content.getText());
+                    event.setLocation(Location.getText());
+                    event.setIdOrganizer(1010101);
+                    if( EventServices.getInstance().updateevent(event)){
+                        Dialog.show("Success","Connection accepted",new Command("OK"));
+                    }else {
+                        Dialog.show("Failed","Connection rejected",new Command("OK"));
+                    }
+                }
+            }
+        });
 
         add(BorderLayout.CENTER, by);
 

@@ -1,5 +1,6 @@
 package Services;
 
+import Modules.Forum;
 import Modules.Post;
 import com.codename1.io.*;
 import com.codename1.ui.events.ActionListener;

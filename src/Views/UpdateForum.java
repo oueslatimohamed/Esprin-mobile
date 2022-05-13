@@ -13,12 +13,12 @@ import com.codename1.ui.plaf.RoundRectBorder;
 import com.codename1.ui.util.Resources;
 
 public class UpdateForum extends Form {
-    public UpdateForum(Resources theme) {
+    public UpdateForum(Resources theme,Forum forum) {
         super(new BorderLayout(BorderLayout.CENTER_BEHAVIOR_CENTER_ABSOLUTE));
         // setUIID("AddEvent");
         // setLayout(BoxLayout.y());
         Container AddNew = FlowLayout.encloseCenter(
-                new Label("Add New Forum ", "EventTitle")
+                new Label("Update New Forum ", "EventTitle")
 
         );
         //AddNew.getAllStyles().setPadding(TOP,0);
@@ -32,12 +32,12 @@ public class UpdateForum extends Form {
 
 
 
-        TextField title = new TextField("", "Enter title") ;
+        TextField title = new TextField(forum.getTitle(), "Enter title") ;
         //TextField content = new TextField("", "Description!..", 20, TextField.ANY);
-        TextArea content =new TextArea("content..",4, 20);
-        TextField tag = new TextField("", "Tag") ;
+        TextArea content =new TextArea(forum.getContent(),4, 20);
+        TextField tag = new TextField(forum.getCategoryForum(), "Tag") ;
 
-        Button addButton = new Button("ADD FORUM");
+        Button addButton = new Button("UPDATE FORUM");
         addButton.setUIID("LoginButton");
 
         addButton.getUnselectedStyle().setBorder(
@@ -92,12 +92,12 @@ public class UpdateForum extends Form {
                 if(title.getText().isEmpty() || content.getText().isEmpty() || tag.getText().isEmpty()){
                     Dialog.show("Alert", "Please fill all the fields",new Command("OK"));
                 }else {
-                    Forum forum = new Forum();
+                    //Forum forum = new Forum();
                     forum.setTitle(title.getText());
                     forum.setContent(content.getText());
                     forum.setCategoryForum(tag.getText());
                     forum.setIdOwner(10020855);
-                    if( ForumServices.getInstance().addForum(forum)){
+                    if( ForumServices.getInstance().updateForum(forum)){
                         Dialog.show("Success","Connection accepted",new Command("OK"));
                     }else {
                         Dialog.show("Failed","Connection rejected",new Command("OK"));

@@ -2,7 +2,7 @@ package Modules;
 
 import Utils.Enums.State;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Event {
 
@@ -10,17 +10,16 @@ public class Event {
         private  String TitleEvent;
         private String Description;
         private Date DateEvent;
-        private Date DateDebut;
-        private Date DateFin;
-        private int ParticipateNumber;
-        private String Location;
         private String ImgURL;
         private long idOrganizer;
         private State state;
+        private int ParticipateNumber;
+        private String Location;
 
+    public Event() {
+    }
 
-
-        public long getIdOrganizer() {
+    public long getIdOrganizer() {
             return idOrganizer;
         }
 
@@ -68,87 +67,67 @@ public class Event {
 
         public State getState() { return state; }
 
-        public Date getDateDebut() {
-            return DateDebut;
-        }
+    public int getParticipateNumber() {
+        return ParticipateNumber;
+    }
 
-        public void setDateDebut(Date dateDebut) {
-            DateDebut = dateDebut;
-        }
+    public void setParticipateNumber(int participateNumber) {
+        ParticipateNumber = participateNumber;
+    }
 
-        public Date getDateFin() {
-            return DateFin;
-        }
+    public String getLocation() {
+        return Location;
+    }
 
-        public void setDateFin(Date dateFin) {
-            DateFin = dateFin;
-        }
+    public void setLocation(String location) {
+        Location = location;
+    }
 
-        public int getParticipateNumber() {
-            return ParticipateNumber;
-        }
+    public void setState(State state) {
+        this.state = state;
+    }
 
-        public void setParticipateNumber(int participateNumber) {
-            ParticipateNumber = participateNumber;
-        }
+    public Event(String TitleEvent, String Description){
+        this.TitleEvent=TitleEvent;
+        this.Description=Description;
+    }
 
-        public String getLocation() {
-            return Location;
-        }
+    public Event(String TitleEvent, String Description,Date DateEvent){
+        this.TitleEvent=TitleEvent;
+        this.Description=Description;
+        this.DateEvent=DateEvent;
+    }
 
-        public void setLocation(String location) {
-            Location = location;
-        }
 
-        public Event(){
-
-        }
-
-        public Event(String TitleEvent, String Description){
+    public Event(String TitleEvent, String Description, String ImgURL, Date DateEvent, long idOrganizer){
             this.TitleEvent=TitleEvent;
             this.Description=Description;
-        }
-
-        public Event(String TitleEvent, String Description,Date DateEvent){
-            this.TitleEvent=TitleEvent;
-            this.Description=Description;
+            this.ImgURL=ImgURL;
             this.DateEvent=DateEvent;
+            this.idOrganizer= idOrganizer;
         }
 
 
-        public Event(String TitleEvent, String Description, String ImgURL, Date DateEvent, long idOrganizer){
-                this.TitleEvent=TitleEvent;
-                this.Description=Description;
-                this.ImgURL=ImgURL;
-                this.DateEvent=DateEvent;
-                this.idOrganizer= idOrganizer;
-            }
+        public Event(int idEvent, String TitleEvent, String Description,String ImgURL,Date DateEvent, long idOrganizer, State state){
+            this.idEvent=idEvent;
+            this.TitleEvent=TitleEvent;
+            this.Description=Description;
+            this.ImgURL=ImgURL;
+            this.DateEvent=DateEvent;
+            this.idOrganizer= idOrganizer;
+            this.state=state;
+        }
 
 
-            public Event(int idEvent, String TitleEvent, String Description,String ImgURL,Date DateEvent, long idOrganizer, State state, Date DateDebut, Date DateFin, String Location, int ParticipateNumber ){
-                this.idEvent=idEvent;
-                this.TitleEvent=TitleEvent;
-                this.Description=Description;
-                this.ImgURL=ImgURL;
-                this.DateEvent=DateEvent;
-                this.idOrganizer= idOrganizer;
-                this.state=state;
-                this.DateDebut=DateDebut;
-                this.DateFin=DateFin;
-                this.Location=Location;
-                this.ParticipateNumber=ParticipateNumber;
-            }
-
-
-            @Override
-            public String toString() {
-                return "idEvent=" + idEvent +
-                        ",  TitleEvent=" + TitleEvent +
-                        ",  Description=" + Description +
-                        ",  DateEvent=" + DateEvent +
-                        ",  ImgURL=" + ImgURL +
-                        ",  idOrganizer=" + idOrganizer +
-                        ",  State" + state +
-                        '\n';
-            }
+        @Override
+        public String toString() {
+            return "idEvent=" + idEvent +
+                    ",  TitleEvent=" + TitleEvent +
+                    ",  Description=" + Description +
+                    ",  DateEvent=" + DateEvent +
+                    ",  ImgURL=" + ImgURL +
+                    ",  idOrganizer=" + idOrganizer +
+                    ",  State" + state +
+                    '\n';
+        }
 }

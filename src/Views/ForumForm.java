@@ -1,11 +1,15 @@
 package Views;
 
 import Modules.Forum;
+import Services.EventServices;
 import Services.ForumServices;
+import Utils.Enums.State;
 import com.codename1.components.FloatingActionButton;
 import com.codename1.components.MultiButton;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
@@ -101,6 +105,39 @@ public class ForumForm extends SideMenuBaseForm{
         profilePic = profilePic.fill(mask.getWidth(), mask.getHeight());
         Label profilePicLabel = new Label(profilePic, "ProfilePicTitle");
         profilePicLabel.setMask(mask.createMask());
+
+        Button optionBtn = new Button("");
+        optionBtn.setUIID("More");
+        FontImage.setMaterialIcon(optionBtn, FontImage.MATERIAL_MORE_VERT);
+        Button EditBtn = new Button("EditCmd") ;
+        Button DeleteBtn = new Button("DeleteCmd") ;
+        EditBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new UpdateForum(theme,f).show();
+            }
+        });
+        DeleteBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                f.setState(State.Deleted);
+                if( ForumServices.getInstance().deleteforum(f)){
+                    Dialog.show("Success","Connection accepted",new Command("OK"));
+                }else {
+                    Dialog.show("Failed","Connection rejected",new Command("OK"));
+                }
+            }
+        });
+        optionBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                Dialog dialog = new Dialog("Example", BoxLayout.y());
+                dialog.add(EditBtn);
+                dialog.add(DeleteBtn);
+                dialog.setDisposeWhenPointerOutOfBounds(true);
+                dialog.show();
+            }
+        });
 
 
         Container ForumCmp = BoxLayout.encloseY(

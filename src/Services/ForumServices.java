@@ -1,5 +1,6 @@
 package Services;
 
+import Modules.Event;
 import Modules.Forum;
 import com.codename1.io.*;
 import com.codename1.ui.events.ActionListener;
@@ -46,6 +47,40 @@ public class ForumServices {
         return resultOK;
     }
 
+    public boolean updateForum(Forum f) {
+        String url = URL + "updateforum/"+ f.getIdForum();
+        req.setUrl(url);
+        req.setPost(false);
+        req.addArgument("title", f.getTitle());
+        req.addArgument("content", f.getContent());
+        req.addArgument("categorieforum", f.getCategoryForum());
+        req.addArgument("idowner", String.valueOf(f.getIdOwner()));
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+
+    public boolean deleteforum(Forum f) {
+        String url = URL + "deletforum/" + f.getIdForum();
+        req.setUrl(url);
+        req.setPost(false);
+        req.addArgument("state", f.getState().toString());
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
 
     public ArrayList<Forum> parseTasks(String jsonText){
         try {
@@ -66,6 +101,7 @@ public class ForumServices {
                     f.setTitle(obj.get("title").toString());
                 forumArrayList.add(f);
             }
+
 
         } catch (IOException ex) {
 

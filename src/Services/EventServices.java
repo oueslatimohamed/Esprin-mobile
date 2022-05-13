@@ -2,7 +2,6 @@ package Services;
 
 import Modules.Event;
 import Modules.Post;
-import Utils.UsefulMethodes;
 import com.codename1.io.*;
 import com.codename1.ui.events.ActionListener;
 
@@ -38,6 +37,29 @@ public class EventServices {
         //req.addArgument("imgurl", f.getImgURL());
         req.addArgument("locationEvent", f.getLocation());
         req.addArgument("idOrganizer", String.valueOf(f.getIdOrganizer()));
+       // req.addArgument("eventlocal", f.get());
+        //req.addArgument("categorie", f.getCategories());
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+
+    public boolean updateevent(Event f) {
+        String url = URL + "updateevent/" + f.getIdEvent();
+        req.setUrl(url);
+        req.setPost(false);
+        //req.addArgument("title", f.getTitle());
+        req.addArgument("titleevent", f.getTitleEvent());
+        req.addArgument("contentevent", f.getDescription());
+        //req.addArgument("imgurl", f.getImgURL());
+        req.addArgument("locationEvent", f.getLocation());
+        req.addArgument("idOrganizer", String.valueOf(f.getIdOrganizer()));
         // req.addArgument("eventlocal", f.get());
         //req.addArgument("categorie", f.getCategories());
         req.addResponseListener(new ActionListener<NetworkEvent>() {
@@ -51,7 +73,26 @@ public class EventServices {
         return resultOK;
     }
 
-    public ArrayList<Event> parseEvent(String jsonText){
+    public boolean deletedevent(Event f) {
+        String url = URL + "deleteevent/" + f.getIdEvent();
+        req.setUrl(url);
+        req.setPost(false);
+        //req.addArgument("title", f.getTitle());
+        req.addArgument("state", f.getState().toString());
+        // req.addArgument("eventlocal", f.get());
+        //req.addArgument("categorie", f.getCategories());
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return resultOK;
+    }
+
+    public ArrayList<Event> parseTasks(String jsonText){
         try {
             eventArrayList=new ArrayList<>();
             JSONParser j = new JSONParser();
@@ -65,8 +106,6 @@ public class EventServices {
                 f.setIdEvent((int)id);
                 f.setTitleEvent((obj.get("titleevent").toString()));
                 f.setDescription((obj.get("contentevent").toString()));
-                //f.setDateDebut(UsefulMethodes.convertStringToDate(obj.get("datedebut").toString()));
-
                 if (obj.get("imgurl")==null)
                     f.setImgURL("null");
                 else
@@ -90,7 +129,7 @@ public class EventServices {
         req.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
-                eventArrayList = parseEvent(new String(req.getResponseData()));
+                eventArrayList = parseTasks(new String(req.getResponseData()));
                 req.removeResponseListener(this);
 
             }

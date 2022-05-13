@@ -2,8 +2,12 @@ package Views;
 
 import Modules.Event;
 import Services.EventServices;
+import Utils.Enums.State;
+import Views.Cells.EventCell;
 import com.codename1.charts.compat.Paint;
-import com.codename1.components.*;
+import com.codename1.components.FloatingActionButton;
+import com.codename1.components.ImageViewer;
+import com.codename1.components.MultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
@@ -23,11 +27,8 @@ import com.codename1.ui.Label;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 
-import javax.xml.soap.Text;
 import java.sql.Date;
 import java.util.ArrayList;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addActionListener;
 
 //import com.codename1.uikit.materialscreens.SideMenuBaseForm;
 
@@ -79,20 +80,15 @@ public class EventForm extends SideMenuBaseForm {
         fab.getAllStyles().setMargin(BOTTOM, completedTasks.getPreferredH() - fab.getPreferredH() / 2);
         tb.setTitleComponent(fab.bindFabToContainer(titleCmp, CENTER, BOTTOM));
 
-        fab.addActionListener(e -> {
-             new AddEvent(res).show();
-        });
-
         add(new Label("Events", "TodayTitle"));
 
         FontImage arrowDown = FontImage.createMaterial(FontImage.MATERIAL_KEYBOARD_ARROW_DOWN, "Label", 3);
         Container by = new Container();
         ArrayList<Event> Events = EventServices.getInstance().getAllevents();
         for(int i=0;i<Events.size();i++){
-            by = BoxLayout.encloseY(
-                    eventCell(Events.get(i),res)
-            );
-            add(by);
+                by = BoxLayout.encloseY(eventCell(Events.get(i),res));
+                add(by);
+
         }
         //getToolbar().addMaterialCommandToLeftBar("", FontImage.MATERIAL_ARROW_BACK, e -> previous.showBack());
 
@@ -102,9 +98,13 @@ public class EventForm extends SideMenuBaseForm {
         addButtonBottom(arrowDown, "Surprise Party for Matt", 0xffc06f, false);*/
         setupSideMenu(res);
 
+        fab.addActionListener(evt ->{
+            Toolbar.setGlobalToolbar(false);
+            new AddEvent(res).show();
+            Toolbar.setGlobalToolbar(true);
+        });
+
     }
-
-
 
     private void addButtonBottom(Image arrowDown, String text, int color, boolean first) {
         MultiButton finishLandingPage = new MultiButton(text);
@@ -116,14 +116,43 @@ public class EventForm extends SideMenuBaseForm {
         add(FlowLayout.encloseIn(finishLandingPage));
     }
 
-
-
     public Container eventCell(Event e,Resources theme){
+        Image profilePic = theme.getImage("user-picture.jpg");
+        Image mask = theme.getImage("round-mask.png");
 
         Button optionBtn = new Button("");
         optionBtn.setUIID("More");
         FontImage.setMaterialIcon(optionBtn, FontImage.MATERIAL_MORE_VERT);
-       /* optionBtn.addActionListener(k -> {
+        Button EditBtn = new Button("EditCmd") ;
+        Button DeleteBtn = new Button("DeleteCmd") ;
+        EditBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                new UpdateEvent(theme,e).show();
+            }
+        });
+        DeleteBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                e.setState(State.Deleted);
+                if( EventServices.getInstance().deletedevent(e)){
+                    Dialog.show("Success","Connection accepted",new Command("OK"));
+                }else {
+                    Dialog.show("Failed","Connection rejected",new Command("OK"));
+                }
+            }
+        });
+        optionBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                Dialog dialog = new Dialog("Example", BoxLayout.y());
+                dialog.add(EditBtn);
+                dialog.add(DeleteBtn);
+                dialog.setDisposeWhenPointerOutOfBounds(true);
+                dialog.show();
+            }
+        });
+        /*optionBtn.addActionListener(k -> {
             Dialog dlg = new Dialog();
 
             // makes the dialog transparent
@@ -139,51 +168,30 @@ public class EventForm extends SideMenuBaseForm {
                 add(ComponentGroup.enclose(new Button(cancelCmd)));
             }
 
+            Button EditBtn = new Button(EditCmd) ;
+            Button DeleteBtn = new Button(DeleteCmd) ;
 
 
-                //    new UpdateEvent(theme).show();
+
+            EditCmd.actionPerformed(new ActionEvent(dlg));
+
+
+
+
+            //    new UpdateEvent(theme).show();
 
 
             dlg.add(
                     ComponentGroup.enclose(
-
-                            new Button(EditCmd),
-                            new Button(DeleteCmd)
+                            EditBtn,
+                            DeleteBtn
                     )).
                     add(ComponentGroup.enclose(new Button(cancelCmd)));
 
-            // Command result =
+
             dlg.showStretched(BorderLayout.SOUTH, true);
 
-            /* ToastBar.showMessage("Command " + result.getCommandName(), FontImage.MATERIAL_INFO);
-        });
-*/
-
-
-
-        Button EditBtn = new Button("EditCmd") ;
-        Button DeleteBtn = new Button("DeleteCmd") ;
-        EditBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                new UpdateEvent(theme,e).show();
-            }
-        });
-        optionBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                Dialog dialog = new Dialog("Example", BoxLayout.y());
-                dialog.add(EditBtn);
-                dialog.add(DeleteBtn);
-                dialog.setDisposeWhenPointerOutOfBounds(true);
-                dialog.show();
-            }
-        });
-
-
-
-        Image profilePic = theme.getImage("user-picture.jpg");
-        Image mask = theme.getImage("round-mask.png");
+        });*/
 
         profilePic = profilePic.fill(mask.getWidth(), mask.getHeight());
         Label profilePicLabel = new Label(profilePic, "ProfilePicTitle");
@@ -205,18 +213,17 @@ public class EventForm extends SideMenuBaseForm {
                         )
                 ).add(BorderLayout.WEST, image),
                 // new TextArea(Events.get(0).getDescription());
-                new SpanLabel(e.getDescription(), "TodayEntry"),
+                new Label(e.getDescription(), "TodayEntry"),
                 new Label(e.getLocation(), "TodayEntry"),
 
                 BoxLayout.encloseXCenter(
                         //  new Label(Events.get(0).getDateEvent().toString(), "Role"),
-                        new Label("String.valueOf(e.getDateDebut())", "Role"),
+                        new Label("Start Date", "Role"),
                         new Label("End Date", "Role")
                 )
         );
 
         EventCmp.setUIID("EventCmp");
-        EventCmp.getAllStyles().setMarginTop(0);
 
 
 
@@ -258,6 +265,7 @@ public class EventForm extends SideMenuBaseForm {
                         strokeOpacity(120)
         );
 
+
         return OrganizerCmp;
     }
 
@@ -284,6 +292,6 @@ public class EventForm extends SideMenuBaseForm {
     @Override
     protected void showOtherForm(Resources res) {
         Form current = this;
-       // new EventCell(res,current).show();
+        new EventCell(res,current).show();
     }
 }
